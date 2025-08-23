@@ -14,6 +14,7 @@ const nextConfig = {
     webpackConfig.resolve.alias = {
       ...webpackConfig.resolve.alias,
       '@payload-config': path.resolve(process.cwd(), './src/payload.config.ts'),
+      '@/payload.config': path.resolve(process.cwd(), './src/payload.config.ts'),
     }
 
     return webpackConfig
