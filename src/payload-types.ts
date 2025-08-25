@@ -70,6 +70,7 @@ export interface Config {
     users: User;
     media: Media;
     blog: Blog;
+    'service-bookings': ServiceBooking;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -79,6 +80,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     blog: BlogSelect<false> | BlogSelect<true>;
+    'service-bookings': ServiceBookingsSelect<false> | ServiceBookingsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -258,6 +260,28 @@ export interface Blog {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "service-bookings".
+ */
+export interface ServiceBooking {
+  id: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  serviceType: 'phone-repair' | 'laptop-repair' | 'tablet-repair' | 'console-repair' | 'other';
+  status: 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled';
+  /**
+   * Internal notes for this booking
+   */
+  notes?: string | null;
+  /**
+   * Indicates if WhatsApp message was successfully sent
+   */
+  whatsappMessageSent?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -274,6 +298,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'blog';
         value: string | Blog;
+      } | null)
+    | ({
+        relationTo: 'service-bookings';
+        value: string | ServiceBooking;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -396,6 +424,21 @@ export interface BlogSelect<T extends boolean = true> {
         metaDescription?: T;
         keywords?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "service-bookings_select".
+ */
+export interface ServiceBookingsSelect<T extends boolean = true> {
+  fullName?: T;
+  email?: T;
+  phone?: T;
+  serviceType?: T;
+  status?: T;
+  notes?: T;
+  whatsappMessageSent?: T;
   updatedAt?: T;
   createdAt?: T;
 }
