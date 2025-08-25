@@ -10,6 +10,7 @@ import sharp from 'sharp'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Blog } from './collections/Blog'
+import ServiceBookings from './collections/ServiceBookings'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -34,7 +35,7 @@ export default buildConfig({
     'https://phone-repair-rho.vercel.app/blog',
   ],
 
-  collections: [Users, Media, Blog],
+  collections: [Users, Media, Blog, ServiceBookings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
