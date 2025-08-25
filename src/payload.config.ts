@@ -21,6 +21,19 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
+
+  // 👇 Add this block
+  cors: [
+    'http://localhost:3000',             // local frontend
+    'http://localhost:3001',             // local frontend
+    'https://phone-repair-rho.vercel.app',  // vercel domain
+  ],
+  csrf: [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'https://phone-repair-rho.vercel.app/blog',
+  ],
+
   collections: [Users, Media, Blog],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
