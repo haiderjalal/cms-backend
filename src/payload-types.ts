@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     blog: Blog;
     'service-bookings': ServiceBooking;
+    products: Product;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -81,6 +82,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     blog: BlogSelect<false> | BlogSelect<true>;
     'service-bookings': ServiceBookingsSelect<false> | ServiceBookingsSelect<true>;
+    products: ProductsSelect<false> | ProductsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -147,7 +149,15 @@ export interface User {
  */
 export interface Media {
   id: string;
+  /**
+   * Alternative text for accessibility and SEO
+   */
   alt: string;
+  /**
+   * Optional caption for the image
+   */
+  caption?: string | null;
+  category?: ('products' | 'services' | 'gallery' | 'blog' | 'general') | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -282,6 +292,32 @@ export interface ServiceBooking {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: string;
+  title: string;
+  slug?: string | null;
+  description?: string | null;
+  price: number;
+  currency?: ('USD' | 'EUR' | 'GBP') | null;
+  image: string | Media;
+  category: 'phone-repair' | 'laptop-repair' | 'tablet-repair' | 'accessories' | 'battery-services' | 'water-damage';
+  serviceType: 'service' | 'product';
+  estimatedTime?: string | null;
+  warranty?: string | null;
+  isActive?: boolean | null;
+  isFeatured?: boolean | null;
+  whatsappMessage?: string | null;
+  /**
+   * Lower numbers appear first
+   */
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -302,6 +338,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'service-bookings';
         value: string | ServiceBooking;
+      } | null)
+    | ({
+        relationTo: 'products';
+        value: string | Product;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -373,6 +413,8 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  caption?: T;
+  category?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -439,6 +481,28 @@ export interface ServiceBookingsSelect<T extends boolean = true> {
   status?: T;
   notes?: T;
   whatsappMessageSent?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products_select".
+ */
+export interface ProductsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  description?: T;
+  price?: T;
+  currency?: T;
+  image?: T;
+  category?: T;
+  serviceType?: T;
+  estimatedTime?: T;
+  warranty?: T;
+  isActive?: T;
+  isFeatured?: T;
+  whatsappMessage?: T;
+  sortOrder?: T;
   updatedAt?: T;
   createdAt?: T;
 }
