@@ -7,23 +7,44 @@ export const Media: CollectionConfig = {
     plural: 'Media',
   },
   upload: true,
+  access: {
+    read: () => true, // ✅ anyone can read (needed for frontend)
+    
+    // For debugging purposes, explicitly check authentication but allow any authenticated user
+    create: ({ req }) => {
+      // Log authentication info for debugging
+      console.log('Media create access check:')
+      console.log('- User authenticated:', Boolean(req.user))
+      console.log('- User role:', req.user?.role)
+      console.log('- User ID:', req.user?.id)
+      
+      // Allow any authenticated user to create
+      return Boolean(req.user)
+    },
+    
+    // For debugging purposes, explicitly check authentication but allow any authenticated user
+    update: ({ req }) => {
+      // Allow any authenticated user to update
+      return Boolean(req.user)
+    },
+    
+    // For debugging purposes, explicitly check authentication but allow any authenticated user
+    delete: ({ req }) => {
+      // Allow any authenticated user to delete
+      return Boolean(req.user)
+    },
+  },
   fields: [
     {
       name: 'alt',
       type: 'text',
       label: 'Alt Text',
       required: true,
-      admin: {
-        description: 'Alternative text for accessibility and SEO',
-      },
     },
     {
       name: 'caption',
       type: 'text',
       label: 'Caption',
-      admin: {
-        description: 'Optional caption for the image',
-      },
     },
     {
       name: 'category',
@@ -39,12 +60,6 @@ export const Media: CollectionConfig = {
       defaultValue: 'general',
     },
   ],
-  access: {
-    read: () => true, // Public read access
-    create: ({ req: { user } }) => !!user,
-    update: ({ req: { user } }) => !!user,
-    delete: ({ req: { user } }) => !!user,
-  },
   admin: {
     group: 'Media Management',
   },
