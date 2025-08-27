@@ -1,4 +1,3 @@
-// storage-adapter-import-placeholder
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
@@ -6,7 +5,6 @@ import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
-
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
@@ -20,54 +18,44 @@ const dirname = path.dirname(filename)
 export default buildConfig({
   admin: {
     user: Users.slug,
-    importMap: {
-      baseDir: path.resolve(dirname),
-    },
-    meta: {
-      titleSuffix: '- Phone Repair CMS'
+    importMap: { baseDir: path.resolve(dirname) },
+    meta: { titleSuffix: '- Phone Repair CMS' },
+    // Ensure admin UI authentication is properly configured
+    components: {
+      // This ensures proper authentication in the admin UI
+      beforeLogin: [
+        // Add any custom components if needed
+      ],
     },
   },
 
-  serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3001',
-  
+  // Enable debug mode to see more detailed error messages
+  debug: process.env.NODE_ENV !== 'production',
+
+  serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000',
+
   cors: [
-    'http://localhost:3000',             // Next.js development server
-    'http://localhost:3001',             // local backend
-    'http://localhost:3004',             // frontend port
-    'https://phone-repair-rho.vercel.app',  // production frontend domain
-    process.env.FRONTEND_URL             // environment variable for frontend URL
-  ].filter((url): url is string => Boolean(url)),
-  
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:3004',
+    'https://phone-repair-rho.vercel.app',
+    process.env.FRONTEND_URL,
+  ].filter((url): url is string => Boolean(url)) as string[],
+
   csrf: [
     'http://localhost:3000',
     'http://localhost:3001',
     'http://localhost:3004',
     'https://phone-repair-rho.vercel.app',
-    process.env.FRONTEND_URL
-  ].filter((url): url is string => Boolean(url)),
+    process.env.FRONTEND_URL,
+  ].filter((url): url is string => Boolean(url)) as string[],
 
   collections: [Users, Media, Blog, ServiceBookings, Products],
   editor: lexicalEditor(),
-  secret: process.env.PAYLOAD_SECRET || '',
-  typescript: {
-    outputFile: path.resolve(dirname, 'payload-types.ts'),
-  },
-  db: mongooseAdapter({
-    url: process.env.DATABASE_URI || '',
-  }),
+  secret: process.env.PAYLOAD_SECRET || 'supersecret',
+  typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
+  db: mongooseAdapter({ url: process.env.DATABASE_URI || '' }),
   sharp,
-  
-  // File Upload Configuration
-  upload: {
-    limits: {
-      fileSize: 5000000 // 5MB
-    }
-  },
-  
 
-  
-  plugins: [
-    payloadCloudPlugin(),
-    // storage-adapter-placeholder
-  ],
+  plugins: [payloadCloudPlugin()],
 })

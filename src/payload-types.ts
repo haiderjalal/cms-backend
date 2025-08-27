@@ -125,6 +125,7 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: string;
+  role: 'admin' | 'user';
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -149,13 +150,7 @@ export interface User {
  */
 export interface Media {
   id: string;
-  /**
-   * Alternative text for accessibility and SEO
-   */
   alt: string;
-  /**
-   * Optional caption for the image
-   */
   caption?: string | null;
   category?: ('products' | 'services' | 'gallery' | 'blog' | 'general') | null;
   updatedAt: string;
@@ -309,9 +304,6 @@ export interface Product {
   isActive?: boolean | null;
   isFeatured?: boolean | null;
   whatsappMessage?: string | null;
-  /**
-   * Lower numbers appear first
-   */
   sortOrder?: number | null;
   updatedAt: string;
   createdAt: string;
@@ -390,6 +382,7 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  role?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CMS Authentication Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h2 {
+      margin-top: 0;
+      color: #333;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    input {
+      padding: 8px;
+      margin: 5px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .result {
+      background-color: #f5f5f5;
+      padding: 10px;
+      border-radius: 4px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+    .error {
+      color: #d32f2f;
+    }
+    .success {
+      color: #388e3c;
+    }
+  </style>
+</head>
+<body>
+  <h1>CMS Authentication Test</h1>
+  <p>This page helps test authentication and permissions in the CMS.</p>
+  
+  <div class="container">
+    <!-- Login Section -->
+    <div class="card">
+      <h2>1. Login</h2>
+      <div>
+        <label for="email">Email:</label>
+        <input type="email" id="email" value="admin@example.com">
+      </div>
+      <div>
+        <label for="password">Password:</label>
+        <input type="password" id="password" value="Password123!">
+      </div>
+      <button id="loginBtn">Login</button>
+      <div id="loginResult" class="result"></div>
+    </div>
+    
+    <!-- Current User Section -->
+    <div class="card">
+      <h2>2. Get Current User</h2>
+      <button id="getCurrentUserBtn">Get Current User</button>
+      <div id="currentUserResult" class="result"></div>
+    </div>
+    
+    <!-- Create User Section -->
+    <div class="card">
+      <h2>3. Create User</h2>
+      <div>
+        <label for="newUserEmail">Email:</label>
+        <input type="email" id="newUserEmail" value="newuser@example.com">
+      </div>
+      <div>
+        <label for="newUserPassword">Password:</label>
+        <input type="password" id="newUserPassword" value="NewUser123!">
+      </div>
+      <div>
+        <label for="newUserRole">Role:</label>
+        <select id="newUserRole">
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      <button id="createUserBtn">Create User</button>
+      <div id="createUserResult" class="result"></div>
+    </div>
+    
+    <!-- Create Media Section -->
+    <div class="card">
+      <h2>4. Create Media (Text Only Test)</h2>
+      <p>This will test if you have permission to create media (without actually uploading a file)</p>
+      <button id="testMediaPermissionBtn">Test Media Permission</button>
+      <div id="mediaPermissionResult" class="result"></div>
+    </div>
+    
+    <!-- Create Product Section -->
+    <div class="card">
+      <h2>5. Create Product</h2>
+      <div>
+        <label for="productTitle">Title:</label>
+        <input type="text" id="productTitle" value="Test Product">
+      </div>
+      <div>
+        <label for="productPrice">Price:</label>
+        <input type="number" id="productPrice" value="99.99">
+      </div>
+      <button id="createProductBtn">Create Product</button>
+      <div id="createProductResult" class="result"></div>
+    </div>
+  </div>
+
+  <script>
+    // Store the authentication token
+    let authToken = '';
+    
+    // Helper function to display results
+    function displayResult(elementId, data, isError = false) {
+      const element = document.getElementById(elementId);
+      if (isError) {
+        element.innerHTML = `<span class="error">Error: ${JSON.stringify(data, null, 2)}</span>`;
+      } else {
+        element.innerHTML = `<span class="success">Success!</span><br>${JSON.stringify(data, null, 2)}`;
+      }
+    }
+    
+    // Login function
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      try {
+        const response = await fetch('/api/users/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw data;
+        }
+        
+        authToken = data.token;
+        displayResult('loginResult', { message: 'Login successful', token: authToken });
+      } catch (error) {
+        displayResult('loginResult', error, true);
+      }
+    });
+    
+    // Get current user function
+    document.getElementById('getCurrentUserBtn').addEventListener('click', async () => {
+      if (!authToken) {
+        displayResult('currentUserResult', { message: 'Please login first' }, true);
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/users/me', {
+          method: 'GET',
+          headers: {
+            'Authorization': `JWT ${authToken}`,
+          },
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw data;
+        }
+        
+        displayResult('currentUserResult', data);
+      } catch (error) {
+        displayResult('currentUserResult', error, true);
+      }
+    });
+    
+    // Create user function
+    document.getElementById('createUserBtn').addEventListener('click', async () => {
+      if (!authToken) {
+        displayResult('createUserResult', { message: 'Please login first' }, true);
+        return;
+      }
+      
+      const email = document.getElementById('newUserEmail').value;
+      const password = document.getElementById('newUserPassword').value;
+      const role = document.getElementById('newUserRole').value;
+      
+      try {
+        const response = await fetch('/api/users', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `JWT ${authToken}`,
+          },
+          body: JSON.stringify({ email, password, role }),
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw data;
+        }
+        
+        displayResult('createUserResult', data);
+      } catch (error) {
+        displayResult('createUserResult', error, true);
+      }
+    });
+    
+    // Test media permission function
+    document.getElementById('testMediaPermissionBtn').addEventListener('click', async () => {
+      if (!authToken) {
+        displayResult('mediaPermissionResult', { message: 'Please login first' }, true);
+        return;
+      }
+      
+      try {
+        // Just check the endpoint without actually uploading
+        const response = await fetch('/api/media', {
+          method: 'GET',
+          headers: {
+            'Authorization': `JWT ${authToken}`,
+          },
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw data;
+        }
+        
+        displayResult('mediaPermissionResult', { 
+          message: 'You have permission to access media', 
+          mediaCount: data.docs ? data.docs.length : 0 
+        });
+      } catch (error) {
+        displayResult('mediaPermissionResult', error, true);
+      }
+    });
+    
+    // Create product function
+    document.getElementById('createProductBtn').addEventListener('click', async () => {
+      if (!authToken) {
+        displayResult('createProductResult', { message: 'Please login first' }, true);
+        return;
+      }
+      
+      const title = document.getElementById('productTitle').value;
+      const price = document.getElementById('productPrice').value;
+      
+      try {
+        const response = await fetch('/api/products', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `JWT ${authToken}`,
+          },
+          body: JSON.stringify({
+            title,
+            price: parseFloat(price),
+            currency: 'USD',
+            category: 'accessories',
+            serviceType: 'product',
+            description: 'Test product created from test page'
+          }),
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw data;
+        }
+        
+        displayResult('createProductResult', data);
+      } catch (error) {
+        displayResult('createProductResult', error, true);
+      }
+    });
+  </script>
+</body>
+</html>
