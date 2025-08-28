@@ -45,26 +45,7 @@ export const Products: CollectionConfig = {
         ],
       },
     },
-    {
-      name: 'description',
-      type: 'textarea',
-    },
-    {
-      name: 'price',
-      type: 'number',
-      required: true,
-      min: 0,
-    },
-    {
-      name: 'currency',
-      type: 'select',
-      defaultValue: 'USD',
-      options: [
-        { label: 'USD ($)', value: 'USD' },
-        { label: 'EUR (€)', value: 'EUR' },
-        { label: 'GBP (£)', value: 'GBP' },
-      ],
-    },
+
     {
       name: 'image',
       type: 'upload',
@@ -93,8 +74,7 @@ export const Products: CollectionConfig = {
         { label: 'Product Sale', value: 'product' },
       ],
     },
-    { name: 'estimatedTime', type: 'text' },
-    { name: 'warranty', type: 'text' },
+
     { name: 'isActive', type: 'checkbox', defaultValue: true },
     { name: 'isFeatured', type: 'checkbox', defaultValue: false },
     { name: 'whatsappMessage', type: 'textarea' },
