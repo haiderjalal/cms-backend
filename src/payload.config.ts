@@ -20,13 +20,6 @@ export default buildConfig({
     user: Users.slug,
     importMap: { baseDir: path.resolve(dirname) },
     meta: { titleSuffix: '- Phone Repair CMS' },
-    // Ensure admin UI authentication is properly configured
-    components: {
-      // This ensures proper authentication in the admin UI
-      beforeLogin: [
-        // Add any custom components if needed
-      ],
-    },
   },
 
   // Enable debug mode to see more detailed error messages
