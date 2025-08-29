@@ -72,6 +72,7 @@ export interface Config {
     blog: Blog;
     'service-bookings': ServiceBooking;
     products: Product;
+    'contact-submissions': ContactSubmission;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -83,6 +84,7 @@ export interface Config {
     blog: BlogSelect<false> | BlogSelect<true>;
     'service-bookings': ServiceBookingsSelect<false> | ServiceBookingsSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
+    'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -293,18 +295,54 @@ export interface Product {
   id: string;
   title: string;
   slug?: string | null;
-  description?: string | null;
-  price: number;
-  currency?: ('USD' | 'EUR' | 'GBP') | null;
   image: string | Media;
   category: 'phone-repair' | 'laptop-repair' | 'tablet-repair' | 'accessories' | 'battery-services' | 'water-damage';
   serviceType: 'service' | 'product';
-  estimatedTime?: string | null;
-  warranty?: string | null;
   isActive?: boolean | null;
   isFeatured?: boolean | null;
   whatsappMessage?: string | null;
   sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-submissions".
+ */
+export interface ContactSubmission {
+  id: string;
+  /**
+   * Contact person name
+   */
+  name: string;
+  /**
+   * Contact email address
+   */
+  email: string;
+  /**
+   * Contact phone number
+   */
+  phoneNumber: string;
+  /**
+   * Company name (if provided)
+   */
+  company?: string | null;
+  /**
+   * Message content
+   */
+  message?: string | null;
+  /**
+   * Current status of this contact submission
+   */
+  status: 'new' | 'in-progress' | 'completed' | 'archived';
+  /**
+   * Date and time of submission
+   */
+  submittedAt: string;
+  /**
+   * Internal notes about this contact (not visible to customers)
+   */
+  notes?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -334,6 +372,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'products';
         value: string | Product;
+      } | null)
+    | ({
+        relationTo: 'contact-submissions';
+        value: string | ContactSubmission;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -484,18 +526,29 @@ export interface ServiceBookingsSelect<T extends boolean = true> {
 export interface ProductsSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
-  description?: T;
-  price?: T;
-  currency?: T;
   image?: T;
   category?: T;
   serviceType?: T;
-  estimatedTime?: T;
-  warranty?: T;
   isActive?: T;
   isFeatured?: T;
   whatsappMessage?: T;
   sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-submissions_select".
+ */
+export interface ContactSubmissionsSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  phoneNumber?: T;
+  company?: T;
+  message?: T;
+  status?: T;
+  submittedAt?: T;
+  notes?: T;
   updatedAt?: T;
   createdAt?: T;
 }
