@@ -11,6 +11,7 @@ import { Media } from './collections/Media'
 import { Blog } from './collections/Blog'
 import ServiceBookings from './collections/ServiceBookings'
 import { Products } from './collections/Products'
+import { ContactSubmissions } from './collections/ContactSubmissions'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -43,7 +44,7 @@ export default buildConfig({
     process.env.FRONTEND_URL,
   ].filter((url): url is string => Boolean(url)) as string[],
 
-  collections: [Users, Media, Blog, ServiceBookings, Products],
+  collections: [Users, Media, Blog, ServiceBookings, Products, ContactSubmissions],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || 'supersecret',
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
