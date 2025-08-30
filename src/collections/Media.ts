@@ -1,4 +1,9 @@
 import type { CollectionConfig } from 'payload'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const filename = fileURLToPath(import.meta.url)
+const dirname = path.dirname(filename)
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -7,8 +12,10 @@ export const Media: CollectionConfig = {
     plural: 'Media',
   },
   upload: {
-    // ✅ Only `staticDir` is valid in Payload v3
-    staticDir: 'media',
+    // Where files are physically stored
+    staticDir: path.resolve(dirname, '../media'),
+
+    // (optional) Image resizing
     imageSizes: [
       {
         name: 'thumbnail',
@@ -29,24 +36,13 @@ export const Media: CollectionConfig = {
         position: 'centre',
       },
     ],
+
     adminThumbnail: 'thumbnail',
     mimeTypes: ['image/*'],
   },
   access: {
-    read: () => true, // ✅ anyone can read (needed for frontend)
-
-    create: ({ req }) => {
-      console.log('========== MEDIA UPLOAD DEBUG INFO ==========')
-      console.log('- User authenticated:', Boolean(req.user))
-      console.log('- User role:', req.user?.role)
-      console.log('- User ID:', req.user?.id)
-      console.log('- Request method:', req.method)
-      console.log('- Environment:', process.env.NODE_ENV)
-      console.log('=============================================')
-
-      return Boolean(req.user)
-    },
-
+    read: () => true,
+    create: ({ req }) => Boolean(req.user),
     update: ({ req }) => Boolean(req.user),
     delete: ({ req }) => Boolean(req.user),
   },

@@ -526,12 +526,17 @@ export function getOptimizedMediaURL(
 export function formatDate(dateString: string | null | undefined): string {
   if (!dateString) return ''
   
+  // Use a fixed format that will be consistent between server and client
+  // to avoid React hydration errors
   const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
+  const year = date.getFullYear()
+  const month = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ][date.getMonth()]
+  const day = date.getDate()
+  
+  return `${month} ${day}, ${year}`
 }
 
 // Helper function to get excerpt from rich text content with improved text extraction
