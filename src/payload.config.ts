@@ -24,7 +24,7 @@ export default buildConfig({
   },
 
   // Enable debug mode to see more detailed error messages
-  debug: process.env.NODE_ENV !== 'production',
+  debug: true, // Always enable debug mode to help troubleshoot upload issues
 
   serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000',
 
@@ -50,6 +50,14 @@ export default buildConfig({
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
   db: mongooseAdapter({ url: process.env.DATABASE_URI || '' }),
   sharp,
+
+  // Configure file upload options for all environments
+  upload: {
+    limits: {
+      fileSize: 5000000, // 5MB in bytes
+    },
+    useTempFiles: true,
+  },
 
   plugins: [payloadCloudPlugin()],
 })
