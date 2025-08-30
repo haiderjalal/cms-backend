@@ -6,33 +6,49 @@ export const Media: CollectionConfig = {
     singular: 'Media',
     plural: 'Media',
   },
-  upload: true,
+  upload: {
+    // ✅ Only `staticDir` is valid in Payload v3
+    staticDir: 'media',
+    imageSizes: [
+      {
+        name: 'thumbnail',
+        width: 400,
+        height: 300,
+        position: 'centre',
+      },
+      {
+        name: 'card',
+        width: 768,
+        height: 1024,
+        position: 'centre',
+      },
+      {
+        name: 'tablet',
+        width: 1024,
+        height: undefined,
+        position: 'centre',
+      },
+    ],
+    adminThumbnail: 'thumbnail',
+    mimeTypes: ['image/*'],
+  },
   access: {
     read: () => true, // ✅ anyone can read (needed for frontend)
-    
-    // For debugging purposes, explicitly check authentication but allow any authenticated user
+
     create: ({ req }) => {
-      // Log authentication info for debugging
-      console.log('Media create access check:')
+      console.log('========== MEDIA UPLOAD DEBUG INFO ==========')
       console.log('- User authenticated:', Boolean(req.user))
       console.log('- User role:', req.user?.role)
       console.log('- User ID:', req.user?.id)
-      
-      // Allow any authenticated user to create
+      console.log('- Request method:', req.method)
+      console.log('- Environment:', process.env.NODE_ENV)
+      console.log('=============================================')
+
       return Boolean(req.user)
     },
-    
-    // For debugging purposes, explicitly check authentication but allow any authenticated user
-    update: ({ req }) => {
-      // Allow any authenticated user to update
-      return Boolean(req.user)
-    },
-    
-    // For debugging purposes, explicitly check authentication but allow any authenticated user
-    delete: ({ req }) => {
-      // Allow any authenticated user to delete
-      return Boolean(req.user)
-    },
+
+    update: ({ req }) => Boolean(req.user),
+    delete: ({ req }) => Boolean(req.user),
   },
   fields: [
     {
