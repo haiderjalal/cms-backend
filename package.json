@@ -16,6 +16,7 @@
     "start:prod": "cross-env NODE_ENV=production NODE_OPTIONS=--no-deprecation next start",
     "build:prod": "cross-env NODE_ENV=production NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build",
     "postbuild": "payload generate:types",
+    "serve:media": "cross-env NODE_OPTIONS=--no-deprecation serve ./media -p 4001",
     "test": "pnpm run test:int && pnpm run test:e2e",
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --no-experimental-strip-types\" pnpm exec playwright test",
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts"

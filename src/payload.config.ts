@@ -6,6 +6,7 @@ import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
+// Collections
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Blog } from './collections/Blog'
@@ -23,18 +24,23 @@ export default buildConfig({
     meta: { titleSuffix: '- Phone Repair CMS' },
   },
 
-  // Enable debug mode to see more detailed error messages
-  debug: true, // Always enable debug mode to help troubleshoot upload issues
+  debug: true, // ✅ show detailed errors in dev
 
-  serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000',
+  // ✅ Public server URL (for generating media URLs)
+  serverURL:
+    process.env.PAYLOAD_PUBLIC_SERVER_URL ||
+    (process.env.NODE_ENV === 'production'
+      ? 'https://your-vercel-app-url.vercel.app'
+      : 'http://localhost:3000'),
 
+  // ✅ Security
   cors: [
     'http://localhost:3000',
     'http://localhost:3001',
     'http://localhost:3004',
     'https://phone-repair-rho.vercel.app',
     process.env.FRONTEND_URL,
-  ].filter((url): url is string => Boolean(url)) as string[],
+  ].filter(Boolean) as string[],
 
   csrf: [
     'http://localhost:3000',
@@ -42,22 +48,28 @@ export default buildConfig({
     'http://localhost:3004',
     'https://phone-repair-rho.vercel.app',
     process.env.FRONTEND_URL,
-  ].filter((url): url is string => Boolean(url)) as string[],
+  ].filter(Boolean) as string[],
 
+  // ✅ Collections
   collections: [Users, Media, Blog, ServiceBookings, Products, ContactSubmissions],
+
+  // ✅ Rich text editor
   editor: lexicalEditor(),
+
+  // ✅ Secrets & typing
   secret: process.env.PAYLOAD_SECRET || 'supersecret',
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
+
+  // ✅ Database
   db: mongooseAdapter({ url: process.env.DATABASE_URI || '' }),
   sharp,
 
-  // Configure file upload options for all environments
+  // ✅ Global upload settings (no more tempDir errors)
   upload: {
-    limits: {
-      fileSize: 5000000, // 5MB in bytes
-    },
-    useTempFiles: true,
+    limits: { fileSize: 5_000_000 }, // 5MB
+    // ⚠️ Removed useTempFiles → it was causing tmp mkdir issues
   },
 
+  // ✅ Plugins
   plugins: [payloadCloudPlugin()],
 })
