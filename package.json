@@ -22,9 +22,11 @@
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.879.0",
     "@payloadcms/db-mongodb": "3.53.0",
     "@payloadcms/next": "3.53.0",
     "@payloadcms/payload-cloud": "3.53.0",
+    "@payloadcms/plugin-cloud-storage": "3.53.0",
     "@payloadcms/richtext-lexical": "3.53.0",
     "@payloadcms/ui": "3.53.0",
     "@playwright/test": "1.54.1",
