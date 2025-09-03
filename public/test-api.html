@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test API Authentication</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1, h2 {
+      color: #333;
+    }
+    .card {
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    pre {
+      background-color: #f5f5f5;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+    .error {
+      color: #d32f2f;
+    }
+    .success {
+      color: #388e3c;
+    }
+  </style>
+</head>
+<body>
+  <h1>Payload CMS API Test</h1>
+  
+  <div class="card">
+    <h2>1. Test Authentication</h2>
+    <div>
+      <label for="email">Email:</label>
+      <input type="email" id="email" value="admin@example.com">
+    </div>
+    <div style="margin-top: 10px;">
+      <label for="password">Password:</label>
+      <input type="password" id="password" value="password">
+    </div>
+    <div style="margin-top: 15px;">
+      <button id="loginBtn">Login</button>
+    </div>
+    <pre id="authResult">Results will appear here...</pre>
+  </div>
+
+  <div class="card">
+    <h2>2. Test Media Upload</h2>
+    <div>
+      <label for="file">Select a file:</label>
+      <input type="file" id="file">
+    </div>
+    <div style="margin-top: 10px;">
+      <label for="altText">Alt Text:</label>
+      <input type="text" id="altText" value="Test image">
+    </div>
+    <div style="margin-top: 15px;">
+      <button id="uploadBtn" disabled>Upload (Login First)</button>
+    </div>
+    <pre id="uploadResult">Results will appear here...</pre>
+    <div id="imagePreview" style="margin-top: 15px; display: none;">
+      <h3>Uploaded Image:</h3>
+      <img id="previewImg" style="max-width: 100%; border: 1px solid #ddd;" />
+    </div>
+  </div>
+
+  <script>
+    let authToken = '';
+    const baseUrl = 'http://localhost:3000';
+    
+    // Login functionality
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const authResult = document.getElementById('authResult');
+      
+      try {
+        authResult.textContent = 'Authenticating...';
+        
+        const response = await fetch(`${baseUrl}/api/users/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+          credentials: 'include'
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          authToken = data.token || '';
+          authResult.innerHTML = `<span class="success">Login successful!</span>\n\nUser: ${data.user.email}\nRole: ${data.user.role || 'N/A'}\nToken: ${authToken.substring(0, 20)}...`;
+          document.getElementById('uploadBtn').disabled = false;
+        } else {
+          authResult.innerHTML = `<span class="error">Error: ${data.errors?.[0]?.message || 'Authentication failed'}</span>`;
+        }
+      } catch (error) {
+        authResult.innerHTML = `<span class="error">Error: ${error.message}</span>`;
+      }
+    });
+    
+    // Upload functionality
+    document.getElementById('uploadBtn').addEventListener('click', async () => {
+      const fileInput = document.getElementById('file');
+      const altText = document.getElementById('altText').value;
+      const uploadResult = document.getElementById('uploadResult');
+      const imagePreview = document.getElementById('imagePreview');
+      const previewImg = document.getElementById('previewImg');
+      
+      if (!fileInput.files[0]) {
+        uploadResult.innerHTML = '<span class="error">Please select a file</span>';
+        return;
+      }
+      
+      try {
+        uploadResult.textContent = 'Uploading...';
+        imagePreview.style.display = 'none';
+        
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        formData.append('alt', altText);
+        
+        const response = await fetch(`${baseUrl}/api/media`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `JWT ${authToken}`,
+          },
+          body: formData,
+          credentials: 'include'
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          uploadResult.innerHTML = `<span class="success">Upload successful!</span>\n\nID: ${data.id}\nFilename: ${data.filename}\nURL: ${data.url}`;
+          
+          // Display the image
+          if (data.url) {
+            previewImg.src = data.url;
+            imagePreview.style.display = 'block';
+          }
+        } else {
+          uploadResult.innerHTML = `<span class="error">Error: ${JSON.stringify(data.errors || data, null, 2)}</span>`;
+        }
+      } catch (error) {
+        uploadResult.innerHTML = `<span class="error">Error: ${error.message}</span>`;
+      }
+    });
+  </script>
+</body>
+</html>

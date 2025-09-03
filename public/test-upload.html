@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Media Upload</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      color: #333;
+    }
+    form {
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 5px;
+    }
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+    input[type="file"] {
+      margin-bottom: 20px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Test Media Upload to Vercel Blob</h1>
+  
+  <form id="uploadForm">
+    <label for="file">Select a file to upload:</label>
+    <input type="file" id="file" name="file" required>
+    
+    <label for="alt">Alt Text (required):</label>
+    <input type="text" id="alt" name="alt" required>
+    
+    <button type="submit">Upload</button>
+  </form>
+
+  <div id="result"></div>
+
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const fileInput = document.getElementById('file');
+      const resultDiv = document.getElementById('result');
+      
+      if (!fileInput.files[0]) {
+        alert('Please select a file');
+        return;
+      }
+      
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+      
+      // Add the alt text field
+      const altText = document.getElementById('alt').value;
+      formData.append('alt', altText);
+      
+      resultDiv.textContent = 'Uploading...';
+      resultDiv.style.display = 'block';
+      
+      try {
+        const response = await fetch('http://localhost:3000/api/media', {
+          method: 'POST',
+          body: formData,
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          resultDiv.innerHTML = `
+            <h3>Upload Successful!</h3>
+            <p>File ID: ${data.id}</p>
+            <p>URL: ${data.url}</p>
+            <img src="${data.url}" style="max-width: 100%; margin-top: 10px;" />
+          `;
+        } else {
+          resultDiv.innerHTML = `<h3>Error:</h3><pre>${JSON.stringify(data, null, 2)}</pre>`;
+        }
+      } catch (error) {
+        resultDiv.textContent = `Error: ${error.message}`;
+      }
+    });
+  </script>
+</body>
+</html>
