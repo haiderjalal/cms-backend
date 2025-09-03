@@ -1,9 +1,6 @@
 import type { CollectionConfig } from 'payload'
-import path from 'path'
-import { fileURLToPath } from 'url'
 
-const filename = fileURLToPath(import.meta.url)
-const dirname = path.dirname(filename)
+// Using Vercel Blob adapter instead of local file storage
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -12,8 +9,6 @@ export const Media: CollectionConfig = {
     plural: 'Media',
   },
   upload: {
-    // Where files are physically stored
-    staticDir: path.resolve(dirname, '../media'),
 
     // (optional) Image resizing
     imageSizes: [
