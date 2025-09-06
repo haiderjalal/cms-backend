@@ -70,6 +70,7 @@ export interface Config {
     users: User;
     media: Media;
     blog: Blog;
+    services: Service;
     'service-bookings': ServiceBooking;
     products: Product;
     'contact-submissions': ContactSubmission;
@@ -82,6 +83,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     blog: BlogSelect<false> | BlogSelect<true>;
+    services: ServicesSelect<false> | ServicesSelect<true>;
     'service-bookings': ServiceBookingsSelect<false> | ServiceBookingsSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
     'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
@@ -293,6 +295,198 @@ export interface Blog {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services".
+ */
+export interface Service {
+  id: string;
+  /**
+   * The title of the service page (for SEO)
+   */
+  pageTitle: string;
+  /**
+   * URL-friendly identifier for the service page
+   */
+  slug: string;
+  /**
+   * Type of repair service
+   */
+  serviceType: 'phone' | 'laptop' | 'tablet' | 'console' | 'data-recovery';
+  /**
+   * Hero image for the service page
+   */
+  headerImage: string | Media;
+  /**
+   * Main heading for the service page
+   */
+  title: string;
+  /**
+   * Subheading for the service page
+   */
+  subtitle?: string | null;
+  /**
+   * Main description of the service
+   */
+  description: string;
+  /**
+   * List of service features or benefits
+   */
+  features: {
+    text: string;
+    /**
+     * Optional icon class for this feature
+     */
+    icon?: string | null;
+    id?: string | null;
+  }[];
+  /**
+   * Detailed information about the service
+   */
+  serviceDetails: {
+    /**
+     * Image for this service detail
+     */
+    image: string | Media;
+    /**
+     * Icon class for this service detail
+     */
+    icon: string;
+    /**
+     * Title for this service detail
+     */
+    title: string;
+    /**
+     * Description for this service detail
+     */
+    description: {
+      root: {
+        type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
+    id?: string | null;
+  }[];
+  /**
+   * Frequently asked questions about the service
+   */
+  faqs?:
+    | {
+        /**
+         * The question
+         */
+        question: string;
+        /**
+         * The answer to the question
+         */
+        answer: {
+          root: {
+            type: string;
+            children: {
+              type: string;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Customer testimonials specific to this service
+   */
+  testimonials?:
+    | {
+        /**
+         * Customer name
+         */
+        name: string;
+        /**
+         * Customer occupation or location
+         */
+        occupation?: string | null;
+        /**
+         * Customer image
+         */
+        image?: (string | null) | Media;
+        /**
+         * Rating from 1-5 stars
+         */
+        rating: number;
+        /**
+         * Testimonial text
+         */
+        text: string;
+        /**
+         * Date of the testimonial
+         */
+        date?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Related services to show at the bottom of the page
+   */
+  relatedServices?:
+    | {
+        /**
+         * Title of the related service
+         */
+        title: string;
+        /**
+         * Slug of the related service page
+         */
+        slug: string;
+        /**
+         * Image for the related service
+         */
+        image?: (string | null) | Media;
+        /**
+         * Brief description of the related service
+         */
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * SEO metadata for the service page
+   */
+  seo?: {
+    /**
+     * Meta title for SEO (defaults to page title if not provided)
+     */
+    metaTitle?: string | null;
+    /**
+     * Meta description for SEO
+     */
+    metaDescription?: string | null;
+    /**
+     * Keywords for SEO
+     */
+    keywords?:
+      | {
+          keyword: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "service-bookings".
  */
 export interface ServiceBooking {
@@ -390,6 +584,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'blog';
         value: string | Blog;
+      } | null)
+    | ({
+        relationTo: 'services';
+        value: string | Service;
       } | null)
     | ({
         relationTo: 'service-bookings';
@@ -560,6 +758,76 @@ export interface BlogSelect<T extends boolean = true> {
         metaTitle?: T;
         metaDescription?: T;
         keywords?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services_select".
+ */
+export interface ServicesSelect<T extends boolean = true> {
+  pageTitle?: T;
+  slug?: T;
+  serviceType?: T;
+  headerImage?: T;
+  title?: T;
+  subtitle?: T;
+  description?: T;
+  features?:
+    | T
+    | {
+        text?: T;
+        icon?: T;
+        id?: T;
+      };
+  serviceDetails?:
+    | T
+    | {
+        image?: T;
+        icon?: T;
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  faqs?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
+  testimonials?:
+    | T
+    | {
+        name?: T;
+        occupation?: T;
+        image?: T;
+        rating?: T;
+        text?: T;
+        date?: T;
+        id?: T;
+      };
+  relatedServices?:
+    | T
+    | {
+        title?: T;
+        slug?: T;
+        image?: T;
+        description?: T;
+        id?: T;
+      };
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        keywords?:
+          | T
+          | {
+              keyword?: T;
+              id?: T;
+            };
       };
   updatedAt?: T;
   createdAt?: T;

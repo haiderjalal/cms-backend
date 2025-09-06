@@ -12,6 +12,7 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Blog } from './collections/Blog'
 import ServiceBookings from './collections/ServiceBookings'
+import { Services } from './collections/Services'
 import { Products } from './collections/Products'
 import { ContactSubmissions } from './collections/ContactSubmissions'
 
@@ -52,7 +53,7 @@ export default buildConfig({
   ].filter(Boolean) as string[],
 
   // ✅ Collections
-  collections: [Users, Media, Blog, ServiceBookings, Products, ContactSubmissions],
+  collections: [Users, Media, Blog, Services, ServiceBookings, Products, ContactSubmissions],
 
   // ✅ Rich text editor
   editor: lexicalEditor(),
