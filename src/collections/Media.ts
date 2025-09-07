@@ -9,7 +9,6 @@ export const Media: CollectionConfig = {
     plural: 'Media',
   },
   upload: {
-
     // (optional) Image resizing
     imageSizes: [
       {
