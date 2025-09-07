@@ -8,38 +8,29 @@ import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
 // Collections
-import { Users } from './collections/Users'
-import { Media } from './collections/Media'
-import { Blog } from './collections/Blog'
-import ServiceBookings from './collections/ServiceBookings'
-import { Services } from './collections/Services'
-import { Products } from './collections/Products'
-import { ContactSubmissions } from './collections/ContactSubmissions'
+import Media from './collections/Media'
 
-const filename = fileURLToPath(import.meta.url)
-const dirname = path.dirname(filename)
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export default buildConfig({
   admin: {
-    user: Users.slug,
-    importMap: { baseDir: path.resolve(dirname) },
+    user: 'users',
     meta: { titleSuffix: '- Phone Repair CMS' },
   },
 
-  debug: true, // ✅ show detailed errors in dev
+  debug: process.env.NODE_ENV !== 'production',
 
-  // ✅ Public server URL (for generating media URLs)
+  // Public server URL (for generating media URLs)
   serverURL:
     process.env.PAYLOAD_PUBLIC_SERVER_URL ||
     (process.env.NODE_ENV === 'production'
       ? 'https://your-vercel-app-url.vercel.app'
       : 'http://localhost:3000'),
 
-  // ✅ Security
+  // Security
   cors: [
     'http://localhost:3000',
     'http://localhost:3001',
-    'http://localhost:3004',
     'https://phone-repair-rho.vercel.app',
     process.env.FRONTEND_URL,
   ].filter(Boolean) as string[],
@@ -47,32 +38,30 @@ export default buildConfig({
   csrf: [
     'http://localhost:3000',
     'http://localhost:3001',
-    'http://localhost:3004',
     'https://phone-repair-rho.vercel.app',
     process.env.FRONTEND_URL,
   ].filter(Boolean) as string[],
 
-  // ✅ Collections
-  collections: [Users, Media, Blog, Services, ServiceBookings, Products, ContactSubmissions],
+  // Collections
+  collections: [Media],
 
-  // ✅ Rich text editor
+  // Rich text editor
   editor: lexicalEditor(),
 
-  // ✅ Secrets & typing
+  // Secrets & typing
   secret: process.env.PAYLOAD_SECRET || 'supersecret',
-  typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
+  typescript: { outputFile: path.resolve(__dirname, 'payload-types.ts') },
 
-  // ✅ Database
+  // Database
   db: mongooseAdapter({ url: process.env.DATABASE_URI || '' }),
   sharp,
 
-  // ✅ Global upload settings (no more tempDir errors)
+  // Global upload settings
   upload: {
     limits: { fileSize: 5_000_000 }, // 5MB
-    // ⚠️ Removed useTempFiles → it was causing tmp mkdir issues
   },
 
-  // ✅ Plugins
+  // Plugins
   plugins: [
     payloadCloudPlugin(),
     vercelBlobStorage({
