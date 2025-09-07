@@ -9,6 +9,12 @@ import sharp from 'sharp'
 
 // Collections
 import Media from './collections/Media'
+import { Users } from './collections/Users'
+import { Blog } from './collections/Blog'
+import ServiceBookings from './collections/ServiceBookings'
+import { Services } from './collections/Services'
+import { Products } from './collections/Products'
+import { ContactSubmissions } from './collections/ContactSubmissions'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -43,7 +49,7 @@ export default buildConfig({
   ].filter(Boolean) as string[],
 
   // Collections
-  collections: [Media],
+  collections: [Users, Media, Blog, Services, ServiceBookings, Products, ContactSubmissions],
 
   // Rich text editor
   editor: lexicalEditor(),
