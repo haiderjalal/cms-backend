@@ -72,6 +72,14 @@ const ServiceBookings: CollectionConfig = {
           value: 'console-repair',
         },
         {
+          label: 'Data Recovery',
+          value: 'data-recovery',
+        },
+        {
+          label: 'Screen Replacement',
+          value: 'screen-replacement',
+        },
+        {
           label: 'Other',
           value: 'other',
         },
