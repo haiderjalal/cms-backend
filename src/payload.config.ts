@@ -40,7 +40,7 @@ export default buildConfig({
     'http://localhost:3000',
     'http://localhost:3001',
     'http://localhost:3004',
-    'https://phone-repair-rho.vercel.app',
+    'https://www.lambtonphones.com.au',
     process.env.FRONTEND_URL,
   ].filter(Boolean) as string[],
 
@@ -48,7 +48,7 @@ export default buildConfig({
     'http://localhost:3000',
     'http://localhost:3001',
     'http://localhost:3004',
-    'https://phone-repair-rho.vercel.app',
+    'https://www.lambtonphones.com.au',
     process.env.FRONTEND_URL,
   ].filter(Boolean) as string[],
 
