@@ -494,7 +494,14 @@ export interface ServiceBooking {
   fullName: string;
   email: string;
   phone: string;
-  serviceType: 'phone-repair' | 'laptop-repair' | 'tablet-repair' | 'console-repair' | 'other';
+  serviceType:
+    | 'phone-repair'
+    | 'laptop-repair'
+    | 'tablet-repair'
+    | 'console-repair'
+    | 'data-recovery'
+    | 'screen-replacement'
+    | 'other';
   status: 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled';
   /**
    * Internal notes for this booking
